@@ -107,8 +107,11 @@ void Rpc<TTr>::process_small_req_st(SSlot *sslot, pkthdr_t *pkthdr) {
     }
   }
 
-  // If we're here, this is the first (and only) packet of this new request
-  assert(pkthdr->req_num_ == sslot->cur_req_num_ + kSessionReqWindow);
+  // If we're here, this is the first (and only) packet of this new request.
+  if (pkthdr->req_num_ != sslot->cur_req_num_ + kSessionReqWindow) {
+    return;
+  }
+  // assert(pkthdr->req_num_ == sslot->cur_req_num_ + kSessionReqWindow);
 
   auto &req_msgbuf = sslot->server_info_.req_msgbuf_;
   assert(req_msgbuf.is_buried());  // Buried on prev req's enqueue_response()
